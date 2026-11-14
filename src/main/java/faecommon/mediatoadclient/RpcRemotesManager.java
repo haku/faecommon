@@ -47,6 +47,10 @@ public class RpcRemotesManager {
 		this.rpcClient.start();
 	}
 
+	public RpcClient getClient() {
+		return this.rpcClient;
+	}
+
 	private static String findHostName() {
 		try {
 			return InetAddress.getLocalHost().getHostName();
