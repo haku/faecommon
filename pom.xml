@@ -16,8 +16,10 @@
 
 		<grpc.version>1.85.1</grpc.version>
 		<jetty.version>10.0.26</jetty.version>
+		<jjwt.version>0.13.0</jjwt.version>
 		<opentelemetry.version>1.67.0</opentelemetry.version>
 		<prometheus.version>1.10.0</prometheus.version>
+		<protobuf-java.version>4.36.2</protobuf-java.version>
 		<slf4j.version>2.0.20</slf4j.version>
 	</properties>
 
@@ -76,6 +78,13 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<excludes>
+								<!-- exclude generated code. -->
+								<exclude>mediatoad/rpc/MediaGrpc*.class</exclude>
+								<exclude>mediatoad/rpc/MediaToadProto*.class</exclude>
+							</excludes>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -87,6 +96,37 @@
 				<configuration>
 					<rulesUri>file:///${project.basedir}/maven-version-rules.xml</rulesUri>
 				</configuration>
+			</plugin>
+
+			<!-- https://github.com/grpc/grpc-java/?tab=readme-ov-file#generated-code -->
+			<plugin>
+				<groupId>io.github.ascopes</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>3.10.3</version>
+
+				<configuration>
+					<protocVersion>${protobuf-java.version}</protocVersion>
+					<sourceDirectories>
+						<sourceDirectory>${project.basedir}/src/main/proto</sourceDirectory>
+					</sourceDirectories>
+
+					<binaryMavenPlugins>
+						<binaryMavenPlugin>
+							<groupId>io.grpc</groupId>
+							<artifactId>protoc-gen-grpc-java</artifactId>
+							<version>${grpc.version}</version>
+							<options>@generated=omit</options>
+						</binaryMavenPlugin>
+					</binaryMavenPlugins>
+				</configuration>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- https://github.com/apache/maven-project-info-reports-plugin/issues/103 -->
@@ -138,8 +178,20 @@
 		<!-- RPC -->
 
 		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>${protobuf-java.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-protobuf</artifactId>
+			<version>${grpc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-stub</artifactId>
 			<version>${grpc.version}</version>
 		</dependency>
 
@@ -155,6 +207,26 @@
 			<artifactId>annotations-api</artifactId>
 			<version>6.0.53</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-gson</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Parsing -->
