@@ -7,7 +7,7 @@ if ! [ -d "./src/test/java/faecommon" ] ; then
 fi
 
 project="$1"
-file="$2"
+shift
 
 dir="../$project"
 if ! [ -d "$dir" ] ; then
@@ -15,11 +15,13 @@ if ! [ -d "$dir" ] ; then
   exit 1
 fi
 
-target="$dir/$file"
-if [ -e "$target" ] ; then
-  echo "already exists: $target"
-  exit 1
-fi
+for file in "$@" ; do
+  target="$dir/$file"
+  if [ -e "$target" ] ; then
+    echo "already exists: $target"
+    exit 1
+  fi
 
-mkdir -vp "$(dirname "$target")"
-cp -v "$file" "$target"
+  mkdir -vp "$(dirname "$target")"
+  cp -v "$file" "$target"
+done
