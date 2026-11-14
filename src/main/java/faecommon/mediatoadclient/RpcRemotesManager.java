@@ -10,7 +10,7 @@ public class RpcRemotesManager {
 
 	private static final String PRIVATE_KEY_FILE_NAME = "rpcPrivateKey.jwk";
 
-	private final RpcClient rpcClient;
+	protected final RpcClient rpcClient;
 
 	public RpcRemotesManager(final List<RemoteInstance> instances, final File configDir, final boolean printAccessLog) throws IOException {
 		final JwtIdentity credentials = makeCredentials(configDir);
