@@ -22,7 +22,7 @@ for project in ${projects[@]}; do
   echo "Project: $dir"
 
   shopt -s globstar
-  for f in ./src/**/*.java; do
+  for f in ./src/*/{java,proto}/**/*; do
     target="$dir/$f"
     if [ -f "$target" ] ; then
       if ! cmp -s "$f" "$target" ; then
