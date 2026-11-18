@@ -15,7 +15,7 @@ fi
 for project in ${projects[@]}; do
   dir="../$project"
   if ! [ -d "$dir" ] ; then
-    echo "not a dir: $dir"
+    echo "project not found: $dir"
     exit 1
   fi
 
