@@ -33,9 +33,14 @@ public class ArtistInfoGuesserTest {
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/1.01 - Some Track.ogg" },
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/1-01 - Some Track.ogg" },
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/Some Track.ogg" },
-				{ ARTIST_TITLE, "/foo/bar/Some Artist - Some Track.ogg" },
+				{ ARTIST_TITLE.withConfidence(Confidence.MAYBE), "/foo/bar/Some Artist - Some Track.ogg" },
 				{ ARTIST_TITLE.withConfidence(Confidence.GUESS), "/foo/bar/Some Artist/Some Track.ogg" },
 				{ ALBUM_TITLE, "/foo/bar/Some Album/01 - Some Track.ogg" },
+				{ ALBUM_TITLE, "/foo/bar/Some Album/1.01 - Some Track.ogg" },
+				{ ALBUM_TITLE, "/foo/bar/Some Album/1-01 - Some Track.ogg" },
+				{ ALBUM_TITLE, "/foo/bar/Some Album - 01 - Some Track.ogg" },
+				{ ALBUM_TITLE, "/foo/bar/Some Album - 1.01 - Some Track.ogg" },
+				{ ALBUM_TITLE, "/foo/bar/Some Album - 1-01 - Some Track.ogg" },
 
 				// Awkward titles
 				{ ARTIST_ALBUM_TITLE.withTitle("Some Track - Some Subtitle"),
@@ -51,7 +56,7 @@ public class ArtistInfoGuesserTest {
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album - 01 - Some Track [some note].ogg" },
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/01 - Some Track [some note] [another].ogg" },
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/Some Track [some note] [another].ogg" },
-				{ ARTIST_TITLE, "/foo/bar/Some Artist - Some Track [some note]  [another].ogg" },
+				{ ARTIST_TITLE.withConfidence(Confidence.MAYBE), "/foo/bar/Some Artist - Some Track [some note]  [another].ogg" },
 				{ ARTIST_TITLE.withConfidence(Confidence.GUESS), "/foo/bar/Some Artist/Some Track [some note]  [another].ogg" },
 				{ ALBUM_TITLE, "/foo/bar/Some Album/01 - Some Track [some note]  [another].ogg" },
 		});

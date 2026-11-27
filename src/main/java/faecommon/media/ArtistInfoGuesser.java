@@ -9,14 +9,26 @@ public class ArtistInfoGuesser {
 
 	private static final String EXTENSION = "\\.[A-Za-z0-9]{2,}$";
 
-	private static final Pattern ARTIST_ALBUM_TITLE_FILE_NAME_PATTERN = Pattern.compile(
+	private static final Pattern ARTIST_ALBUM_NUMBER_TITLE_FILE_NAME_PATTERN = Pattern.compile(
 			"^(?<artist>.+?)\\s+?-\\s+?"
 			+ "(?<album>.+?)\\s+?-\\s+?"
-			+ "(?<number>[0-9\\.-]+\\s+?-\\s+?)?"
+			+ "(?<number>[0-9\\.-]+\\s+?-\\s+?)"
 			+ "(?<title>.+?)"
 			+ EXTENSION);
 
-	private static final Pattern ARTIST_FILE_NAME_PATTERN = Pattern.compile(
+	private static final Pattern ALBUM_NUMBER_TITLE_FILE_NAME_PATTERN = Pattern.compile(
+			"^(?<album>.+?)\\s+?-\\s+?"
+			+ "(?<number>[0-9\\.-]+\\s+?-\\s+?)"
+			+ "(?<title>.+?)"
+			+ EXTENSION);
+
+	private static final Pattern ARTIST_ALBUM_TITLE_FILE_NAME_PATTERN = Pattern.compile(
+			"^(?<artist>.+?)\\s+?-\\s+?"
+			+ "(?<album>.+?)\\s+?-\\s+?"
+			+ "(?<title>.+?)"
+			+ EXTENSION);
+
+	private static final Pattern ARTIST_TITLE_FILE_NAME_PATTERN = Pattern.compile(
 			"^(?<artist>.+?)\\s+?-\\s+?"
 			+ "(?<title>.+?)"
 			+ EXTENSION);
@@ -50,17 +62,21 @@ public class ArtistInfoGuesser {
 			if (d.matches() && f.matches()) return makeMetadata(d.group("artist"), d.group("album"), f.group("title"), Confidence.OK);
 		}
 
+		// Artist - Album - ## - Title.ext
+		{
+			final Matcher f = ARTIST_ALBUM_NUMBER_TITLE_FILE_NAME_PATTERN.matcher(fileName);
+			if (f.matches()) return makeMetadata(f.group("artist"), f.group("album"), f.group("title"), Confidence.OK);
+		}
+		// Album - ## - Title.ext
+		{
+			final Matcher f = ALBUM_NUMBER_TITLE_FILE_NAME_PATTERN.matcher(fileName);
+			if (f.matches()) return makeMetadata(null, f.group("album"), f.group("title"), Confidence.OK);
+		}
+
 		// Album/## - Title.ext
 		{
 			final Matcher f = NUMBER_TITLE_FILE_NAME_PATTERN.matcher(fileName);
 			if (f.matches()) return makeMetadata(null, dirName, f.group("title"), Confidence.OK);
-		}
-
-		// Artist - Album - ## - Title.ext
-		// Artist - Album - Title.ext
-		{
-			final Matcher f = ARTIST_ALBUM_TITLE_FILE_NAME_PATTERN.matcher(fileName);
-			if (f.matches()) return makeMetadata(f.group("artist"), f.group("album"), f.group("title"), Confidence.OK);
 		}
 
 		// Artist - Album/Title.ext
@@ -70,10 +86,17 @@ public class ArtistInfoGuesser {
 			if (d.matches() && f.matches()) return makeMetadata(d.group("artist"), d.group("album"), f.group("title"), Confidence.OK);
 		}
 
-		// Artist - Title.ext
+		// Artist - Album - Title.ext
 		{
-			final Matcher f = ARTIST_FILE_NAME_PATTERN.matcher(fileName);
-			if (f.matches()) return makeMetadata(f.group("artist"), null, f.group("title"), Confidence.OK);
+			final Matcher f = ARTIST_ALBUM_TITLE_FILE_NAME_PATTERN.matcher(fileName);
+			if (f.matches()) return makeMetadata(f.group("artist"), f.group("album"), f.group("title"), Confidence.MAYBE);
+		}
+
+		// Artist - Title.ext
+		// maybe cos could also be "album - title", etc.
+		{
+			final Matcher f = ARTIST_TITLE_FILE_NAME_PATTERN.matcher(fileName);
+			if (f.matches()) return makeMetadata(f.group("artist"), null, f.group("title"), Confidence.MAYBE);
 		}
 
 		// Artist/Title.ext
@@ -94,9 +117,22 @@ public class ArtistInfoGuesser {
 		return new ArtistInfo(artist, album, removeNotes(title), confidence);
 	}
 
+	// These are in order, best to worst.
 	public enum Confidence {
 		OK,
+		MAYBE,
 		GUESS,
+		;
+
+		public boolean isBetterThan(final Confidence c) {
+			if (c == null) return true;
+			return ordinal() < c.ordinal();
+		}
+
+		public boolean isWorseThan(final Confidence c) {
+			if (c == null) return true;
+			return ordinal() > c.ordinal();
+		}
 	}
 
 	public static class ArtistInfo {
@@ -139,6 +175,10 @@ public class ArtistInfoGuesser {
 
 		public boolean hasConfidence(final Confidence wantedConfidence) {
 			return this.confidence.ordinal() <= wantedConfidence.ordinal();
+		}
+
+		public Confidence getConfidence() {
+			return this.confidence;
 		}
 
 		@Override
