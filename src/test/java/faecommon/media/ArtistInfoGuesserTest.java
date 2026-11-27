@@ -27,7 +27,11 @@ public class ArtistInfoGuesserTest {
 		return Arrays.asList(new Object[][] {
 				// Basic structure
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album - 01 - Some Track.ogg" },
+				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album - 1.01 - Some Track.ogg" },
+				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album - 1-01 - Some Track.ogg" },
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/01 - Some Track.ogg" },
+				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/1.01 - Some Track.ogg" },
+				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/1-01 - Some Track.ogg" },
 				{ ARTIST_ALBUM_TITLE, "/foo/bar/Some Artist - Some Album/Some Track.ogg" },
 				{ ARTIST_TITLE, "/foo/bar/Some Artist - Some Track.ogg" },
 				{ ARTIST_TITLE.withConfidence(Confidence.GUESS), "/foo/bar/Some Artist/Some Track.ogg" },

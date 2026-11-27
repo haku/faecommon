@@ -12,7 +12,7 @@ public class ArtistInfoGuesser {
 	private static final Pattern ARTIST_ALBUM_TITLE_FILE_NAME_PATTERN = Pattern.compile(
 			"^(?<artist>.+?)\\s+?-\\s+?"
 			+ "(?<album>.+?)\\s+?-\\s+?"
-			+ "(?<number>[0-9]+\\s+?-\\s+?)?"
+			+ "(?<number>[0-9\\.-]+\\s+?-\\s+?)?"
 			+ "(?<title>.+?)"
 			+ EXTENSION);
 
@@ -26,7 +26,7 @@ public class ArtistInfoGuesser {
 			+ "(?<album>.+?)$");
 
 	private static final Pattern NUMBER_TITLE_FILE_NAME_PATTERN = Pattern.compile(
-			"^(?<number>[0-9]+\\s+?-\\s+?)"
+			"^(?<number>[0-9\\.-]+\\s+?-\\s+?)"
 			+ "(?<title>.+?)"
 			+ EXTENSION);
 
